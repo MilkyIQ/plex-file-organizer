@@ -94,6 +94,9 @@ def extract_data_title(filepath, targetDir):
   data = s.strip()
   data = data[0:-1] # remove additional period
 
+  if data == '':
+    raise RuntimeError(Fore.RED + f"Could not find a valid show title for this file. The parent directory of this file might be missing a title.\nFile: {filepath}" + Fore.RESET)
+
   return data
 
 # Strip strings that contain season data and return just the season number
@@ -231,7 +234,7 @@ def rename(targetDir, destPath):
 
   # Primary script loop
   for path in get_files(targetDir, wantedFiles):
-    mediaTitle = extract_data_title(path, targetDir) # TODO: raise an error if show title is an empty string
+    mediaTitle = extract_data_title(path, targetDir)
     mediaSeason = extract_data_season(path, mediaTitle)
     mediaEpisode, filePart = extract_data_episode(path, mediaTitle, mediaSeason)
     fileType = path[path.rfind('.')+1:]
@@ -271,29 +274,3 @@ def rename(targetDir, destPath):
     return
 
 # ------------------------------------------------------------ #
-
-# TODO:
-# [x] Get filenames
-
-# [x] Extract data
-#     [x] Extract season data
-#     [x] Extract episode data
-#     [x] Extract title data
-
-# [x] Account for edge cases
-#     [x] Bad files
-#     [x] Split episodes (part1-part2)
-
-# [x] Get rid of globals
-
-# [x] Take extracted data and make into new filename
-
-# [x] Make script iterable
-
-# [x] Make script able to be called via terminal commands
-
-# [x] Implement a human check where the user can be provided a text file with the list of all the new filepaths and asked "is this okay?"
-
-# [x] List all shows with number of episodes for easier checking of discrepencies
-
-# [x] Bug fix: empty folders not being deleted? 
