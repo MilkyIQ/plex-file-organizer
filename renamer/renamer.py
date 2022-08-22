@@ -237,17 +237,18 @@ def rename(targetDir, destPath):
   # User confirmation
   res.sort()
   if len(res) > 0:
+    # List the changes for each file
     i=0
     for old, new in res:
-      print(Fore.BLACK + old, Fore.RED + f'\n ({i}) -> ', Fore.GREEN + new + Fore.RESET)
+      print(Fore.LIGHTBLACK_EX + old, Fore.RED + f'\n ({i}) -> ', Fore.GREEN + new + Fore.RESET)
       i+=1
     print('')
 
+    # List each show with total files
     i=0
     for title, count in shows.items():
       print(f'{i+1}. {title.translate({46: 32})} - ({count} files)')
       i+=1
-    
     greenLight = input(Fore.YELLOW + f'\n{len(res)} file(s) will be moved. Do these names look okay? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
     print('')
   else:
@@ -285,3 +286,7 @@ def rename(targetDir, destPath):
 # [x] Make script able to be called via terminal commands
 
 # [x] Implement a human check where the user can be provided a text file with the list of all the new filepaths and asked "is this okay?"
+
+# [x] List all shows with number of episodes for easier checking of discrepencies
+
+# [x] Bug fix: empty folders not being deleted? 
