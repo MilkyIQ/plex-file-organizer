@@ -8,13 +8,10 @@ setuptools.setup(
     version="1.0.0",
     author="Thiago Bedal",
     author_email="thiago.bedal@gmail.com",
-    description=("fuck you."),
+    description=("A simple script to rename stinyk files on a plex server"),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="dontgiveashit",
-    project_urls={
-        "Bug Tracker": "stfu",
-    },
+    url="https://github.com/MilkyIQ/plex-file-organizer",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
