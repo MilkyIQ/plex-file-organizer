@@ -32,6 +32,7 @@ If you'd like to try the script out for yourself, you can use [this sample](http
 
 Currently the script is very, very basic and simple (I'm not the most advanced on this stuff), so there are a few limitations:
 
-- In the rename command, you cannot use shortcuts like `$HOME` or `~`. (This is honestly just laziness on my end because I hate string manipulation)
+- No support for filepath shortcuts like `$HOME` or `~`. (This is honestly just laziness on my end because I hate string manipulation)
+- No support for grabbing files off remote computers (i.e., `user@192.168.2.92:/home/user/Downloads` does not work)
 - No support for tab-completing filenames
 - The name of the show MUST be labeled in the parent directory of all the files, otherwise it won't work. This is because I am small brain and I don't know any other way of making this script work
