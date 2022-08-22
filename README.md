@@ -1,4 +1,4 @@
-# Plex File Organizer
+# Plex file organizer
 
 ## Description
 
