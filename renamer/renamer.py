@@ -187,22 +187,29 @@ def delete_garbage(dir, wantedFiles):
 
   # Greenlight to remove badFiles
   if len(badFiles) > 0:
-    for path in badFiles: print(path)
+    for path in sorted(badFiles): print(path)
     greenLight = input(Fore.YELLOW + f'\n{len(badFiles)} unneeded files were found. Would you like to delete them? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
     if greenLight.lower() == 'y':
       for path in badFiles: os.remove(path)
       print('Deleting files...\n')
     else: print('Abort.')
 
-  # Recursively remove all empty folders; thanks Iván B!
-  for path, _, _ in list(os.walk(dir))[::-1]:
-    if len(os.listdir(path)) == 0:
+  # Recursively find all empty folders and add them into a list (this took me so fucking long to figure out please use it)
+  for path, subdirs, files in sorted(list(os.walk(dir))[1:],reverse=True):
+    if subdirs == [] and files == []: # if NO subdirs and NO files
       badFolders.append(path)
+    if subdirs != [] and files == []: # if YES subdirs but NO files
+      for i in subdirs:
+        if os.listdir(path + '/' + i) != []:
+          break
+        else:
+          badFolders.append(path)
+          break
+
   
   # Greenlight to remove badFolders
-  # I'm aware that this is really repetitive and unnecessarily baby-proof, but it is 1:15 AM and i do not give a shit
   if len(badFolders) > 0:
-    for path in badFolders: print(path)
+    for path in sorted(badFolders): print(path)
     greenLight = input(Fore.YELLOW + f'\n{len(badFolders)} empty folder(s) were found. Would you like to delete them? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
     if greenLight.lower() == 'y':
       for path in badFolders: os.rmdir(path)
