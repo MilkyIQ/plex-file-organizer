@@ -7,7 +7,7 @@ from .renamer import *
 
 def main():
     parser = argparse.ArgumentParser(
-        description="balls."
+        description="Plex File Organizer"
     )
     parser.add_argument(
         "targetDir", type=str,

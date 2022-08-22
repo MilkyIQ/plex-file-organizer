@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fhand:
 
 setuptools.setup(
     name="plex-file-organizer",
-    version="1.0.0",
+    version="1.0.2",
     author="Thiago Bedal",
     author_email="thiago.bedal@gmail.com",
     description=("A simple script to rename stinyk files on a plex server"),
@@ -17,7 +17,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=["requests"],
+    install_requires=["colorama"],
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
     entry_points={
