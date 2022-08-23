@@ -114,7 +114,7 @@ def extract_data_season(filepath, title):
   try: 
     data = int(data)
   except ValueError:
-    raise ValueError(Fore.RED + "Could not find a valid season number. There may be invalid characters or multiple seasons contained in a single folder." + f"\nFile: {filepath}")
+    raise ValueError(Fore.RED + "Could not find a valid season number. There may be invalid characters or multiple seasons contained in a single folder." + Fore.RESET + f"\nFile: {filepath}")
   return data
 
 # Evaluate filenames for the episode number and return just the number
@@ -122,7 +122,7 @@ def extract_data_episode(filepath, title, season):
   file = prep_txt(filepath.split('/')[-1], removeStr=title)
   pos, obj = search_data_pos(fname=file, regex="E.?[0-9]$|e.?[0-9]$|^[0-9].+[0-9]$")
   if len(re.findall('E.?[0-9]$|e.+[0-9]$|^[0-9].+[0-9]$', obj.string)) > 1:
-    raise RuntimeError(Fore.RED + "There are multiple episodes in a single file, that's stupid and I'm not fixing it." + f"\nFile: {filepath}")
+    raise RuntimeError(Fore.RED + "There are multiple episodes in a single file, that's stupid and I'm not fixing it." + Fore.RESET + f"\nFile: {filepath}")
 
   data = re.sub("[a-zA-Z]|-|_", "", obj.string)
   r = re.search(f'{season}', data)
@@ -131,7 +131,7 @@ def extract_data_episode(filepath, title, season):
   try:
     ep = int(data[r.span()[1]:])
   except (AttributeError, ValueError) as e: # Thank you mechanical_meat!
-    raise ValueError(Fore.RED + "Could not validate season number. Multiple seasons may be placed within a single folder or no season is specified." + f"\nFile: {filepath}")
+    raise ValueError(Fore.RED + "Could not validate season number. Multiple seasons may be placed within a single folder or no season is specified." + Fore.RESET + f"\nFile: {filepath}")
   
   #Check for split episodes
   try:
@@ -195,7 +195,7 @@ def delete_garbage(dir, wantedFiles):
     if greenLight.lower() == 'y':
       for path in badFiles: os.remove(path)
       print('Deleting files...\n')
-    else: print('Abort.')
+    else: print('Abort.\n')
 
   # Recursively find all empty folders and add them into a list (this took me so fucking long to figure out please use it)
   for path, subdirs, files in sorted(list(os.walk(dir))[1:],reverse=True):
@@ -217,7 +217,7 @@ def delete_garbage(dir, wantedFiles):
     if greenLight.lower() == 'y':
       for path in badFolders: os.rmdir(path)
       print('Deleting files...\n')
-    else: print('Abort.')
+    else: print('Abort.\n')
 
 
 # ------------------------------------------------------------ #
@@ -226,6 +226,42 @@ def delete_garbage(dir, wantedFiles):
 
 # MAIN FUNCTIONS
 # ------------------------------------------------------------ #
+
+# Ask user to confirm if the changes look OK before merging
+# ik this function is pretty useless seeing as it's only a one-time use, but I got really sick of having to comment all this out
+# plus it makes it easier to test just the results
+def prompt_user(changes, shows, targetDir, wantedFiles):
+  # Check for existing files
+  badFiles = []
+  for old, new in changes:
+    if os.path.exists(new):
+      badFiles.append(new)
+
+  # Print all changes
+  i=0
+  for old, new in changes:
+    print(Fore.LIGHTBLACK_EX + old, Fore.RED + f'\n ({i}) -> ', Fore.GREEN + new + Fore.RESET)
+    i+=1
+  print('')
+
+  # Print all shows
+  i=0
+  for title, count in shows.items():
+    print(f'{i+1}. {title.translate({46: 32})} - ({count[0]} folders) - ({count[1]} files)')
+    i+=1
+  
+  # Ask for confirmation
+  if badFiles: print(Fore.RED + '\nWARNING: Some existing files will be overwritten in the process' + Fore.RESET, end='')
+  greenLight = input(Fore.YELLOW + f'\n{len(changes)} files will be moved. Do these names look okay? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
+
+  # Act on confirmation
+  if greenLight.lower() == 'y':
+    print('')
+    for old, new in changes: move_file(old, new)
+    delete_garbage(targetDir, wantedFiles)
+  else:
+    print('Abort.\n')
+    return
 
 # main()
 def rename(targetDir, destPath):
@@ -238,39 +274,24 @@ def rename(targetDir, destPath):
     mediaSeason = extract_data_season(path, mediaTitle)
     mediaEpisode, filePart = extract_data_episode(path, mediaTitle, mediaSeason)
     fileType = path[path.rfind('.')+1:]
-    
     newPath = create_new_filename(destPath, mediaTitle, mediaSeason, mediaEpisode, filePart, fileType)
-    res.append((path, newPath))
-    if mediaTitle not in shows.keys(): shows[mediaTitle] = 1
-    else: shows[mediaTitle] += 1
-  
-  # User confirmation
-  res.sort()
-  if len(res) > 0:
-    # List the changes for each file
-    i=0
-    for old, new in res:
-      print(Fore.LIGHTBLACK_EX + old, Fore.RED + f'\n ({i}) -> ', Fore.GREEN + new + Fore.RESET)
-      i+=1
-    print('')
 
-    # List each show with total files
-    i=0
-    for title, count in shows.items():
-      print(f'{i+1}. {title.translate({46: 32})} - ({count} files)')
-      i+=1
-    greenLight = input(Fore.YELLOW + f'\n{len(res)} file(s) will be moved. Do these names look okay? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
-    print('')
+    res.append((path, newPath))
+    if mediaTitle not in shows.keys():
+      shows[mediaTitle] = [[], 1]
+    elif mediaTitle in shows.keys() and mediaSeason not in shows[mediaTitle][0]:
+      shows[mediaTitle][0].append(mediaSeason)
+      shows[mediaTitle][1] += 1
+    else:
+      shows[mediaTitle][1] += 1
+  for name in shows: shows[name] = (len(shows[name][0]), shows[name][1])
+
+  # Prompt user and act on it
+  if len(res) > 0:
+    prompt_user(res, shows, targetDir, wantedFiles)
   else:
     raise FileNotFoundError(Fore.RED + "Could not find files to rename. Directory may be empty or contain no files that fit the plex media format" + Fore.RESET)
 
-  # Actually move the files around
-  if greenLight.lower() == 'y':
-    for old, new in res:
-      move_file(old, new)
-    delete_garbage(targetDir, wantedFiles)
-  else:
-    print('Abort.')
-    return
-
 # ------------------------------------------------------------ #
+
+rename('/home/thiago/samba', '/home/thiago/samba')

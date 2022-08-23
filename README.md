@@ -6,7 +6,7 @@ This is a script I wrote mainly for educational purposes (teach myself about reg
 
 Currently I'm only keeping this script as a local zip file that you can easily run and install from the command line. The only reason I'm even setting it up as a python module is to make it so it can be run as a command from anywhere in the command line.
 
-1. Download the [latest release]("https://github.com/MilkyIQ/plex-file-organizer/releases")
+1. Download the [latest release](https://github.com/MilkyIQ/plex-file-organizer/releases "Releases")
 2. Navigate to where you downloaded the file `cd (YOUR-PATH-HERE)`
 3. Install via pip locally `pip3 install plex-file-organizer-(VERSION).zip`
 
@@ -14,11 +14,11 @@ Currently I'm only keeping this script as a local zip file that you can easily r
 
 After installing, you should be able to use the `rename` command to rename and/or move a directory of files and folders. The command takes two arguments: *targetDir*, and *outputDir*. *targetDir* is the directory where you have your downloaded shows in (e.g. ~/Downloads); *outputDir* is the directory you want the files to end up in (e.g. ~/Videos).
 
-Command syntax: 
+Command syntax:
 
 ```bash
 ~$ rename {targetDir} {outputDir}
-``` 
+```
 
 Example:
 
