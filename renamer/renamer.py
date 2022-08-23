@@ -196,7 +196,7 @@ def delete_garbage(dir, wantedFiles):
       print(path)
     if size >= 1000000: size = str(size / 1000000) + 'MB'
     else: size = str(size) + 'B'
-    
+
     greenLight = input(Fore.YELLOW + f'\n{len(badFiles)} unneeded files ({size}) were found. Would you like to delete them? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
     if greenLight.lower() == 'y':
       for path in badFiles: os.remove(path)
@@ -299,5 +299,3 @@ def rename(targetDir, destPath):
     raise FileNotFoundError(Fore.RED + "Could not find files to rename. Directory may be empty or contain no files that fit the plex media format" + Fore.RESET)
 
 # ------------------------------------------------------------ #
-
-rename('/home/thiago/samba', '/home/thiago/samba')
