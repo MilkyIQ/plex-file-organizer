@@ -190,8 +190,14 @@ def delete_garbage(dir, wantedFiles):
 
   # Greenlight to remove badFiles
   if len(badFiles) > 0:
-    for path in sorted(badFiles): print(path)
-    greenLight = input(Fore.YELLOW + f'\n{len(badFiles)} unneeded files were found. Would you like to delete them? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
+    size = 0
+    for path in sorted(badFiles):
+      size += os.path.getsize(path)
+      print(path)
+    if size >= 1000000: size = str(size / 1000000) + 'MB'
+    else: size = str(size) + 'B'
+    
+    greenLight = input(Fore.YELLOW + f'\n{len(badFiles)} unneeded files ({size}) were found. Would you like to delete them? ' + Fore.RESET + '[Y/n]' + Fore.RESET)
     if greenLight.lower() == 'y':
       for path in badFiles: os.remove(path)
       print('Deleting files...\n')
