@@ -36,3 +36,9 @@ Currently the script is very, very basic and simple (I'm not the most advanced o
 - No support for grabbing files off remote computers (i.e., `user@192.168.2.92:/home/user/Downloads` does not work)
 - No support for tab-completing filenames
 - The name of the show MUST be labeled in the parent directory of all the files, otherwise it won't work. This is because I am small brain and I don't know any other way of making this script work
+
+## TODO
+
+- [ ] Add flags for manual specification of title/season data
+- [ ] Cleanup redundant code
+- [ ] Group functions into their own modules (Better for organization maybe?)
